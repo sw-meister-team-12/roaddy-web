@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Header } from '../../components/common';
 import * as S from './style';
 
@@ -9,29 +9,31 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const CURRENT_ROADMAP_ID = '1';
 
 interface FeedbackData {
-  week: number;
+  day: number;
   summary: string;
   completionRate: number;
-  strengths: string[];
-  improvements: string[];
+  tomorrowPreview: string;
+  reviewSuggestions: string[];
 }
 
 const FeedbackDetail = () => {
   const navigate = useNavigate();
   const { week } = useParams<{ week: string }>();
+  const [searchParams] = useSearchParams();
+  const day = searchParams.get('day');
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      if (!week) return;
+      if (!week || !day) return;
 
       try {
         setIsLoading(true);
         setError(null);
 
-        const url = `${BASE_URL}/api/roadmaps/${CURRENT_ROADMAP_ID}/weeks/${week}/feedback`;
+        const url = `${BASE_URL}/api/roadmaps/${CURRENT_ROADMAP_ID}/weeks/${week}/days/${day}/feedback`;
         console.log('피드백 조회 URL:', url);
 
         const response = await fetch(url, {
@@ -59,7 +61,7 @@ const FeedbackDetail = () => {
     };
 
     fetchFeedback();
-  }, [week]);
+  }, [week, day]);
 
   const handleBackClick = () => {
     navigate('/feedback');
@@ -110,38 +112,36 @@ const FeedbackDetail = () => {
           </S.BackButton>
 
           <S.Header>
-            <S.WeekBadge>{feedback.week}주차</S.WeekBadge>
+            <S.WeekBadge>{feedback.day}일차</S.WeekBadge>
             <S.Title>{feedback.summary}</S.Title>
           </S.Header>
 
           <S.CompletionSection>
-            <S.CompletionLabel>주차 완료율</S.CompletionLabel>
+            <S.CompletionLabel>일차 완료율</S.CompletionLabel>
             <S.CompletionRate>{feedback.completionRate}%</S.CompletionRate>
           </S.CompletionSection>
 
           <S.Section>
             <S.SectionTitle>
-              <S.Icon>thumb_up</S.Icon>
-              잘한 점
+              <S.Icon>preview</S.Icon>
+              내일 학습 미리보기
             </S.SectionTitle>
             <S.ItemList>
-              {feedback.strengths.map((strength, index) => (
-                <S.Item key={index} type="strength">
-                  {strength}
-                </S.Item>
-              ))}
+              <S.Item type="preview">
+                {feedback.tomorrowPreview}
+              </S.Item>
             </S.ItemList>
           </S.Section>
 
           <S.Section>
             <S.SectionTitle>
               <S.Icon>lightbulb</S.Icon>
-              개선하면 좋은 점
+              복습 방법
             </S.SectionTitle>
             <S.ItemList>
-              {feedback.improvements.map((improvement, index) => (
+              {feedback.reviewSuggestions.map((suggestion, index) => (
                 <S.Item key={index} type="improvement">
-                  {improvement}
+                  {suggestion}
                 </S.Item>
               ))}
             </S.ItemList>

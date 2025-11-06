@@ -113,15 +113,15 @@ export const ItemList = styled.ul`
   gap: 12px;
 `;
 
-export const Item = styled.li<{ type: 'strength' | 'improvement' }>`
+export const Item = styled.li<{ type: 'preview' | 'improvement' }>`
   background: ${props => 
-    props.type === 'strength' 
-      ? 'rgba(52, 211, 153, 0.1)' 
+    props.type === 'preview' 
+      ? 'rgba(59, 130, 246, 0.1)' 
       : 'rgba(251, 146, 60, 0.1)'
   };
   border-left: 4px solid ${props => 
-    props.type === 'strength' 
-      ? '#34d399' 
+    props.type === 'preview' 
+      ? '#3b82f6' 
       : '#fb923c'
   };
   padding: 16px 20px;
