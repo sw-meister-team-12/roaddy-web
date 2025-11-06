@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/common';
 import * as S from './style';
 
@@ -30,10 +31,12 @@ interface DayData {
 }
 
 const Todo = () => {
+  const navigate = useNavigate();
   const [weekData, setWeekData] = useState<WeekData | null>(null);
   const [dayData, setDayData] = useState<DayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingQuiz, setLoadingQuiz] = useState(false);
 
   // 임시 값
   const roadmapId = 2;
@@ -88,21 +91,68 @@ const Todo = () => {
   };
 
   const handleQuizClick = async () => {
-    if (!dayData) return;
+    if (!dayData || dayData.todos.length === 0) return;
 
-    // 모든 todo에 대해 퀴즈 조회
-    for (const todo of dayData.todos) {
-      try {
+    setLoadingQuiz(true);
+
+    try {
+      // 모든 TODO의 퀴즈 데이터를 가져옴
+      const allQuizzes = [];
+      const quizIds = [];
+
+      for (const todo of dayData.todos) {
         const response = await fetch(`${BASE_URL}/api/todos/${todo.todoId}/quiz`);
+        
         if (response.ok) {
           const quizData = await response.json();
-          console.log(`[${todo.title}] 퀴즈 데이터:`, quizData);
+          allQuizzes.push({
+            todoId: todo.todoId,
+            todoTitle: todo.title,
+            quizId: quizData.quizId,
+            questions: quizData.questions
+          });
+          quizIds.push(quizData.quizId);
         } else {
           console.error(`[${todo.title}] 퀴즈 조회 실패:`, response.status);
         }
-      } catch (err) {
-        console.error(`[${todo.title}] 퀴즈 조회 오류:`, err);
       }
+
+      if (allQuizzes.length === 0) {
+        alert('퀴즈를 불러오는데 실패했습니다.');
+        setLoadingQuiz(false);
+        return;
+      }
+
+      // 모든 퀴즈 문제를 하나로 합침
+      const combinedQuestions = allQuizzes.flatMap((quiz, quizIndex) => 
+        quiz.questions.map((question: any) => ({
+          ...question,
+          todoTitle: quiz.todoTitle,
+          quizId: quiz.quizId,
+          originalQuizIndex: quizIndex
+        }))
+      );
+
+      // 통합된 퀴즈 데이터로 이동
+      navigate(`/todo/quiz/combined`, { 
+        state: { 
+          quizData: {
+            quizId: 'combined',
+            quizIds: quizIds,
+            allQuizzes: allQuizzes,
+            questions: combinedQuestions
+          },
+          todoInfo: {
+            week: dayData.week,
+            day: dayData.day
+          }
+        } 
+      });
+    } catch (err) {
+      console.error('퀴즈 조회 오류:', err);
+      alert('퀴즈를 불러오는데 실패했습니다.');
+    } finally {
+      setLoadingQuiz(false);
     }
   };
 
@@ -173,10 +223,10 @@ const Todo = () => {
 
               <S.QuizButtonContainer>
                 <S.QuizButton
-                  disabled={!allCompleted || !hasAnyTodo}
+                  disabled={!allCompleted || !hasAnyTodo || loadingQuiz}
                   onClick={handleQuizClick}
                 >
-                  퀴즈 풀러가기
+                  {loadingQuiz ? '퀴즈 불러오는 중...' : '퀴즈 풀러가기'}
                 </S.QuizButton>
               </S.QuizButtonContainer>
             </S.TodoSection>
