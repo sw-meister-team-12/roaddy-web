@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
-  RoadmapList,
   Quiz,
   Todo,
   RoadmapGenerate,
@@ -10,15 +9,17 @@ import {
   LevelTestDetail,
   RoadmapSimple,
   DurationSelect,
+  RoadmapView,
 } from './pages';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/roadmap" element={<RoadmapList />} />
+        <Route path="/roadmap" element={<RoadmapView />} />
         <Route path="/" element={<RoadmapGenerate />} />
-        <Route path="/roadmap/:id" element={<RoadmapSimple />} />
+        <Route path="/roadmap/:id" element={<RoadmapView />} />
+        <Route path="/roadmap-simple" element={<RoadmapSimple />} />
         <Route path="/level-test" element={<LevelTest />} />
         <Route path="/level-test/detail" element={<LevelTestDetail />} />
         <Route path="/duration-select" element={<DurationSelect />} />

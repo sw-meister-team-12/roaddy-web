@@ -9,3 +9,4 @@ export { default as LevelTest } from './LevelTest';
 export { default as LevelTestDetail } from './LevelTestDetail';
 export { default as RoadmapSimple } from './RoadmapSimple';
 export { default as DurationSelect } from './DurationSelect';
+export { default as RoadmapView } from './RoadmapView';

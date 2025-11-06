@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/common';
 import { useSurveyStore } from '../../store/surveyStore';
+import { useRoadmapStore } from '../../store/roadmapStore';
 import * as S from './style';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -41,6 +42,7 @@ const DurationSelect = () => {
   const navigate = useNavigate();
   const surveyId = useSurveyStore((state) => state.surveyId);
   const clearSurveyId = useSurveyStore((state) => state.clearSurveyId);
+  const { setRoadmap, clearRoadmap } = useRoadmapStore();
   const [selectedDuration, setSelectedDuration] = useState<DurationType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,13 +84,31 @@ const DurationSelect = () => {
 
       const data = await response.json();
       console.log('로드맵 생성 성공:', data);
+      console.log('전체 데이터:', JSON.stringify(data, null, 2));
 
       // 사용된 surveyId 제거
       clearSurveyId();
 
-      // 로드맵 상세 페이지로 이동
+      // 기존 로드맵 데이터 삭제 후 새로운 로드맵 저장
       if (data.roadmapId) {
-        navigate(`/roadmap/${data.roadmapId}`);
+        clearRoadmap();
+        
+        // API 응답 데이터를 그대로 저장 (milestones를 weeks로 매핑)
+        const roadmapData = {
+          ...data,
+          weeks: data.milestones || data.weeks || []
+        };
+        
+        console.log('저장할 데이터:', roadmapData);
+        console.log('주차 수:', roadmapData.weeks.length);
+        
+        setRoadmap(data.roadmapId, roadmapData);
+        
+        // Zustand persist가 localStorage에 저장될 시간을 주기 위해 약간 지연
+        setTimeout(() => {
+          console.log('로드맵 페이지로 이동:', data.roadmapId);
+          navigate(`/roadmap/${data.roadmapId}`);
+        }, 100);
       } else {
         navigate('/roadmap');
       }
