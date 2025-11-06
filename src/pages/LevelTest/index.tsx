@@ -26,6 +26,7 @@ const LevelTest = () => {
   const navigate = useNavigate();
   const surveyData = location.state as SurveyData | null;
 
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,21 +41,40 @@ const LevelTest = () => {
     return null;
   }
 
-  const handleOptionSelect = (questionId: number, option: string) => {
+  const currentQuestion = surveyData.questions[currentQuestionIndex];
+  const totalQuestions = surveyData.questions.length;
+  const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
+  const handleOptionSelect = (option: string) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: option,
+      [currentQuestion.id]: option,
     }));
   };
 
-  const handleSubmit = async () => {
-    // 모든 질문에 답변했는지 확인
-    const allAnswered = surveyData.questions.every(
-      question => answers[question.id]
-    );
+  const handleNext = () => {
+    if (!answers[currentQuestion.id]) {
+      alert('답변을 선택해주세요.');
+      return;
+    }
 
-    if (!allAnswered) {
-      alert('모든 질문에 답변해주세요.');
+    if (isLastQuestion) {
+      handleSubmit();
+    } else {
+      setCurrentQuestionIndex(prev => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!answers[currentQuestion.id]) {
+      alert('답변을 선택해주세요.');
       return;
     }
 
@@ -99,46 +119,56 @@ const LevelTest = () => {
     }
   };
 
-  const progress = (Object.keys(answers).length / surveyData.questions.length) * 100;
-
   return (
     <>
       <Header />
       <S.Container>
         <S.Content>
-          <S.Title>레벨 테스트</S.Title>
+          <S.PageTitle>기초 진단</S.PageTitle>
           
-          <S.ProgressBar>
+          <S.ProgressSection>
+            <S.ProgressTitle>{currentQuestion.question}</S.ProgressTitle>
+            <S.ProgressCount>
+              {currentQuestionIndex + 1}/{totalQuestions}
+            </S.ProgressCount>
+          </S.ProgressSection>
+
+          <S.ProgressBarContainer>
             <S.ProgressFill progress={progress} />
-          </S.ProgressBar>
+          </S.ProgressBarContainer>
 
-          {surveyData.questions.map((question, index) => (
-            <S.QuestionCard key={question.id}>
-              <S.QuestionNumber>질문 {index + 1}</S.QuestionNumber>
-              <S.QuestionText>{question.question}</S.QuestionText>
-              <S.OptionsContainer>
-                {question.options.map((option) => (
-                  <S.OptionButton
-                    key={option}
-                    selected={answers[question.id] === option}
-                    onClick={() => handleOptionSelect(question.id, option)}
-                  >
-                    {option}
-                  </S.OptionButton>
-                ))}
-              </S.OptionsContainer>
-            </S.QuestionCard>
-          ))}
+          <S.QuestionContainer>
+            <S.QuestionText>{currentQuestion.question}</S.QuestionText>
+            
+            <S.OptionsContainer>
+              {currentQuestion.options.map((option, index) => (
+                <S.OptionButton
+                  key={option}
+                  selected={answers[currentQuestion.id] === option}
+                  onClick={() => handleOptionSelect(option)}
+                >
+                  <S.OptionNumber>{index + 1}</S.OptionNumber>
+                  <S.OptionText>{option}</S.OptionText>
+                </S.OptionButton>
+              ))}
+            </S.OptionsContainer>
+          </S.QuestionContainer>
+
+          <S.ButtonSection>
+            <S.BackButton
+              onClick={handleBack}
+              disabled={currentQuestionIndex === 0}
+            >
+              돌아가기
+            </S.BackButton>
+            <S.NextButton
+              onClick={handleNext}
+              disabled={isSubmitting || !answers[currentQuestion.id]}
+            >
+              {isSubmitting ? '제출 중...' : isLastQuestion ? '제출' : '다음'}
+            </S.NextButton>
+          </S.ButtonSection>
         </S.Content>
-
-        <S.SubmitSection>
-          <S.SubmitButton
-            onClick={handleSubmit}
-            disabled={isSubmitting || Object.keys(answers).length !== surveyData.questions.length}
-          >
-            {isSubmitting ? '제출 중...' : '제출하기'}
-          </S.SubmitButton>
-        </S.SubmitSection>
       </S.Container>
     </>
   );
