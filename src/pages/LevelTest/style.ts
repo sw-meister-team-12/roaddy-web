@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
   background: white;
@@ -19,7 +19,7 @@ export const Content = styled.div`
 `;
 
 export const PageTitle = styled.h1`
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 700;
   font-size: 32px;
   line-height: 38px;
@@ -35,7 +35,7 @@ export const ProgressSection = styled.div`
 `;
 
 export const ProgressTitle = styled.div`
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 18px;
   line-height: 21px;
@@ -43,7 +43,7 @@ export const ProgressTitle = styled.div`
 `;
 
 export const ProgressCount = styled.div`
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 18px;
   line-height: 21px;
@@ -74,7 +74,7 @@ export const QuestionContainer = styled.div`
 `;
 
 export const QuestionText = styled.h2`
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 29px;
@@ -91,41 +91,43 @@ export const OptionsContainer = styled.div`
 export const OptionButton = styled.button<{ selected?: boolean }>`
   width: 100%;
   height: 80px;
-  background: ${({ selected }) => (selected ? '#f6fbfc' : '#fff')};
-  border: 1px solid ${({ selected }) => (selected ? '#cacfce' : '#e1e1e1')};
+  background: ${({ selected }) =>
+    selected ? "rgba(254, 27, 133, 0.3)" : "#fff"};
+  border: 1px solid ${({ selected }) => (selected ? "#FE1B85" : "#e1e1e1")};
   border-radius: 8px;
   padding: 15px 30px;
   cursor: pointer;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
   &:hover {
-    background: #f6fbfc;
-    border-color: #cacfce;
+    background: ${({ selected }) =>
+      selected ? "rgba(254, 27, 133, 0.3)" : "#f6fbfc"};
+    border-color: ${({ selected }) => (selected ? "#FE1B85" : "#cacfce")};
   }
 `;
 
-export const OptionNumber = styled.div`
+export const OptionNumber = styled.div<{ selected?: boolean }>`
   width: 35px;
   height: 35px;
-  background: #e0e7e9;
+  background: ${({ selected }) =>
+    selected ? "rgba(254, 27, 133, 0.64)" : "#e0e7e9"};
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
-  font-family: 'Pretendard', sans-serif;
+
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 24px;
   line-height: 29px;
-  color: #686868;
+  color: ${({ selected }) => (selected ? "#fff" : "#686868")};
 `;
 
 export const OptionText = styled.div`
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 400;
   font-size: 24px;
   line-height: 29px;
@@ -146,17 +148,17 @@ export const BackButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
-  
-  font-family: 'Pretendard', sans-serif;
+
+  font-family: "Pretendard", sans-serif;
   font-weight: 700;
   font-size: 18px;
   line-height: 21px;
   color: white;
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.3);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -170,20 +172,19 @@ export const NextButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
-  
-  font-family: 'Pretendard', sans-serif;
+
+  font-family: "Pretendard", sans-serif;
   font-weight: 700;
   font-size: 18px;
   line-height: 21px;
   color: white;
-  
+
   &:hover {
     background: #dd295e;
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 `;
-
