@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/common';
 import * as S from './style';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const RoadmapGenerate = () => {
+  const navigate = useNavigate();
   const [goal, setGoal] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +41,19 @@ const RoadmapGenerate = () => {
 
       const data = await response.json();
       console.log('로드맵 생성 성공:', data);
-      // TODO: 성공 후 페이지 이동이나 결과 표시
+      
+      // LevelTest 페이지로 이동하면서 설문 데이터 전달
+      if (data.surveyId && data.questions) {
+        navigate('/level-test', {
+          state: {
+            surveyId: data.surveyId,
+            questions: data.questions,
+          },
+        });
+      } else {
+        console.warn('설문 데이터가 없습니다:', data);
+        alert('로드맵이 생성되었지만 설문 데이터가 없습니다.');
+      }
     } catch (error) {
       console.error('로드맵 생성 오류:', error);
       alert('로드맵 생성 중 오류가 발생했습니다.');
