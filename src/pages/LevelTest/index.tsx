@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Header } from '../../components/common';
-import * as S from './style';
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Header } from "../../components/common";
+import * as S from "./style";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -32,8 +32,8 @@ const LevelTest = () => {
 
   useEffect(() => {
     if (!surveyData || !surveyData.surveyId || !surveyData.questions) {
-      alert('설문 데이터가 없습니다. 로드맵 생성 페이지로 이동합니다.');
-      navigate('/roadmap/generate');
+      alert("설문 데이터가 없습니다. 로드맵 생성 페이지로 이동합니다.");
+      navigate("/roadmap/generate");
     }
   }, [surveyData, navigate]);
 
@@ -47,7 +47,7 @@ const LevelTest = () => {
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   const handleOptionSelect = (option: string) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
       [currentQuestion.id]: option,
     }));
@@ -55,65 +55,65 @@ const LevelTest = () => {
 
   const handleNext = () => {
     if (!answers[currentQuestion.id]) {
-      alert('답변을 선택해주세요.');
+      alert("답변을 선택해주세요.");
       return;
     }
 
     if (isLastQuestion) {
       handleSubmit();
     } else {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
   const handleSubmit = async () => {
     if (!answers[currentQuestion.id]) {
-      alert('답변을 선택해주세요.');
+      alert("답변을 선택해주세요.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const url = `${BASE_URL}/api/surveys/${surveyData.surveyId}`;
-      
-      const answersArray: Answer[] = surveyData.questions.map(question => ({
+
+      const answersArray: Answer[] = surveyData.questions.map((question) => ({
         questionId: question.id,
         answer: answers[question.id],
       }));
 
-      console.log('요청 URL:', url);
-      console.log('요청 데이터:', { answers: answersArray });
+      console.log("요청 URL:", url);
+      console.log("요청 데이터:", { answers: answersArray });
 
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ answers: answersArray }),
       });
 
-      console.log('응답 상태:', response.status);
+      console.log("응답 상태:", response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('에러 응답:', errorText);
+        console.error("에러 응답:", errorText);
         throw new Error(`설문 제출에 실패했습니다. (${response.status})`);
       }
 
       const data = await response.json();
-      console.log('설문 제출 성공:', data);
-      
-      alert('설문이 성공적으로 제출되었습니다!');
+      console.log("설문 제출 성공:", data);
+
+      alert("설문이 성공적으로 제출되었습니다!");
       // TODO: 성공 후 다음 페이지로 이동
     } catch (error) {
-      console.error('설문 제출 오류:', error);
-      alert('설문 제출 중 오류가 발생했습니다.');
+      console.error("설문 제출 오류:", error);
+      alert("설문 제출 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -125,7 +125,7 @@ const LevelTest = () => {
       <S.Container>
         <S.Content>
           <S.PageTitle>기초 진단</S.PageTitle>
-          
+
           <S.ProgressSection>
             <S.ProgressTitle>{currentQuestion.question}</S.ProgressTitle>
             <S.ProgressCount>
@@ -139,7 +139,7 @@ const LevelTest = () => {
 
           <S.QuestionContainer>
             <S.QuestionText>{currentQuestion.question}</S.QuestionText>
-            
+
             <S.OptionsContainer>
               {currentQuestion.options.map((option, index) => (
                 <S.OptionButton
@@ -147,7 +147,11 @@ const LevelTest = () => {
                   selected={answers[currentQuestion.id] === option}
                   onClick={() => handleOptionSelect(option)}
                 >
-                  <S.OptionNumber>{index + 1}</S.OptionNumber>
+                  <S.OptionNumber
+                    selected={answers[currentQuestion.id] === option}
+                  >
+                    {index + 1}
+                  </S.OptionNumber>
                   <S.OptionText>{option}</S.OptionText>
                 </S.OptionButton>
               ))}
@@ -165,7 +169,7 @@ const LevelTest = () => {
               onClick={handleNext}
               disabled={isSubmitting || !answers[currentQuestion.id]}
             >
-              {isSubmitting ? '제출 중...' : isLastQuestion ? '제출' : '다음'}
+              {isSubmitting ? "제출 중..." : isLastQuestion ? "제출" : "다음"}
             </S.NextButton>
           </S.ButtonSection>
         </S.Content>
@@ -175,4 +179,3 @@ const LevelTest = () => {
 };
 
 export default LevelTest;
-
