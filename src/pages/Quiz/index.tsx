@@ -28,7 +28,7 @@ const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { todoIds } = location.state || {};
-  const { currentWeek, roadmapData } = useRoadmapStore();
+  const { currentWeek, currentDay, roadmapData, incrementDay } = useRoadmapStore();
 
   const [quizQueue, setQuizQueue] = useState<QuizItem[]>([]);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
@@ -197,22 +197,24 @@ const Quiz = () => {
       if (currentQuizIndex < quizQueue.length - 1) {
         const nextQuizItem = quizQueue[currentQuizIndex + 1];
         
+        // 다음 퀴즈가 일반 TODO 퀴즈인지 확인 (보너스 문제가 아닌 경우)
+        const isNextTodoQuiz = !nextQuizItem.isRetry;
+        
         // 다음 퀴즈가 아직 로드되지 않았으면 로드 (일반 TODO 퀴즈만)
-        if (!nextQuizItem.quizData && !nextQuizItem.isRetry) {
+        if (!nextQuizItem.quizData && isNextTodoQuiz) {
           setLoading(true);
           const quizData = await loadNextTodoQuiz(nextQuizItem.todoId);
           
           if (quizData) {
-            // 큐 업데이트
-            const updatedQueue = [...quizQueue];
-            updatedQueue[currentQuizIndex + 1] = { 
+            // 다음 TODO 퀴즈로 넘어갈 때 큐 정리: 현재까지 완료한 퀴즈 제거
+            const cleanedQueue = quizQueue.slice(currentQuizIndex + 1);
+            cleanedQueue[0] = { 
               ...nextQuizItem, 
               quizData 
             };
-            setQuizQueue(updatedQueue);
             
-            // 다음 퀴즈로 이동
-            setCurrentQuizIndex(prev => prev + 1);
+            setQuizQueue(cleanedQueue);
+            setCurrentQuizIndex(0); // 큐를 정리했으므로 인덱스를 0으로 리셋
             setCurrentQuestionIndex(0);
             setSelectedAnswer(null);
             setCorrectAnswer(null);
@@ -226,19 +228,23 @@ const Quiz = () => {
             
             // 그 다음 퀴즈가 있으면 계속 진행
             if (currentQuizIndex + 2 < quizQueue.length) {
-              setCurrentQuizIndex(prev => prev + 2);
+              // 큐 정리하고 다음으로
+              const cleanedQueue = quizQueue.slice(currentQuizIndex + 2);
+              setQuizQueue(cleanedQueue);
+              setCurrentQuizIndex(0);
               setCurrentQuestionIndex(0);
               setSelectedAnswer(null);
               setCorrectAnswer(null);
               setExplanation(null);
               setIsCorrect(null);
             } else {
-              // 모든 퀴즈 완료 - 피드백 페이지로 이동
-              navigate(`/feedback/${currentWeek}`);
+              // 모든 퀴즈 완료 - day 증가 후 피드백 페이지로 이동
+              incrementDay();
+              navigate(`/feedback/${currentWeek}/${currentDay}`);
             }
           }
         } else {
-          // 이미 로드된 퀴즈 (보너스 문제)로 이동
+          // 이미 로드된 퀴즈 (보너스 문제)로 이동 - 큐 정리 없이 인덱스만 증가
           setCurrentQuizIndex(prev => prev + 1);
           setCurrentQuestionIndex(0);
           setSelectedAnswer(null);
@@ -247,8 +253,9 @@ const Quiz = () => {
           setIsCorrect(null);
         }
       } else {
-        // 모든 퀴즈 완료 - 피드백 페이지로 이동
-        navigate(`/feedback/${currentWeek}`);
+        // 모든 퀴즈 완료 - day 증가 후 피드백 페이지로 이동
+        incrementDay();
+        navigate(`/feedback/${currentWeek}/${currentDay}`);
       }
     }
   };

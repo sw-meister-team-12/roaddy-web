@@ -1,20 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/common';
+import { useRoadmapStore } from '../../store/roadmapStore';
 import * as S from './style';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// 임시 하드코딩: 계정 시스템이 없어서 현재 사용 중인 로드맵 ID
-const CURRENT_ROADMAP_ID = '1';
+interface FeedbackItem {
+  id: number;
+  week: number;
+  day: number;
+  summary: string;
+  completionRate: number;
+  reviewSuggestions: string[];
+  tomorrowPreview: string;
+  createdAt: string;
+}
 
-// 임시 하드코딩: 피드백이 있는 주차 목록 (전체 조회 API가 없으므로)
-// 실제 summary는 디테일 페이지에서 API를 통해 가져옴
-const AVAILABLE_FEEDBACK_WEEKS = [
-  { week: 1, summary: '기초 개념 학습 완료' },
-  { week: 2, summary: '중급 과정 진행 중' },
-  { week: 3, summary: '심화 프로젝트 착수' }
-];
+interface FeedbackListData {
+  feedbacks: FeedbackItem[];
+}
 
 interface RoadmapData {
   currentWeek: number;
@@ -26,51 +31,65 @@ interface RoadmapData {
 
 const FeedbackList = () => {
   const navigate = useNavigate();
+  const { roadmapId } = useRoadmapStore();
+  const hasAlerted = useRef(false);
+  
+  const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRoadmapData = async () => {
-      try {
-        setIsLoading(true);
-        const url = `${BASE_URL}/api/roadmaps/${CURRENT_ROADMAP_ID}`;
-        console.log('로드맵 조회 URL:', url);
+    // 로드맵이 없으면 알럿 띄우고 생성 페이지로 이동 (한 번만)
+    if (!roadmapId && !hasAlerted.current) {
+      hasAlerted.current = true;
+      alert('로드맵을 생성하세요');
+      navigate('/');
+      return;
+    }
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+    if (roadmapId) {
+      fetchData();
+    }
+  }, [roadmapId]);
 
-        console.log('응답 상태:', response.status);
+  const fetchData = async () => {
+    if (!roadmapId) return;
 
-        if (!response.ok) {
-          throw new Error(`로드맵 정보를 불러올 수 없습니다. (${response.status})`);
-        }
+    try {
+      setIsLoading(true);
 
-        const data = await response.json();
-        console.log('로드맵 데이터:', data);
-        setRoadmapData(data);
-      } catch (error) {
-        console.error('로드맵 조회 오류:', error);
-      } finally {
-        setIsLoading(false);
+      // 로드맵 진행 상황 조회
+      const roadmapResponse = await fetch(`${BASE_URL}/api/roadmaps/${roadmapId}`);
+      if (roadmapResponse.ok) {
+        const roadmapData = await roadmapResponse.json();
+        setRoadmapData(roadmapData);
       }
-    };
 
-    fetchRoadmapData();
-  }, []);
+      // 전체 피드백 조회
+      const feedbackResponse = await fetch(`${BASE_URL}/api/roadmaps/${roadmapId}/feedbacks`);
+      if (feedbackResponse.ok) {
+        const feedbackData: FeedbackListData = await feedbackResponse.json();
+        setFeedbacks(feedbackData.feedbacks || []);
+      }
+    } catch (error) {
+      console.error('데이터 조회 오류:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const handleFeedbackClick = (week: number) => {
-    navigate(`/feedback/${week}`);
+  const handleFeedbackClick = (week: number, day: number) => {
+    navigate(`/feedback/${week}/${day}`);
   };
 
   // 통계 계산
-  const totalFeedbacks = roadmapData ? roadmapData.currentWeek - 1 : 0; // 현재 주차는 진행 중이므로 -1
+  const totalFeedbacks = feedbacks.length;
+  
+  // 진행률 계산: (완료한 주차 * 7 + 완료한 일차) / (전체 주차 * 7) * 100
   const completionRate = roadmapData 
-    ? Math.round((roadmapData.completedSessions / roadmapData.totalSessions) * 100)
+    ? Math.round((((roadmapData.currentWeek - 1) * 7 + roadmapData.currentDay) / (roadmapData.totalWeeks * 7)) * 100)
     : 0;
+    
   const remainingWeeks = roadmapData 
     ? roadmapData.totalWeeks - roadmapData.currentWeek + 1
     : 0;
@@ -81,7 +100,7 @@ const FeedbackList = () => {
         <Header />
         <S.Container>
           <S.Content>
-            <S.Title>주차별 피드백</S.Title>
+            <S.Title>일일 피드백</S.Title>
             <S.EmptyState>
               <S.EmptyText>로딩 중...</S.EmptyText>
             </S.EmptyState>
@@ -96,7 +115,7 @@ const FeedbackList = () => {
       <Header />
       <S.Container>
         <S.Content>
-          <S.Title>주차별 피드백</S.Title>
+          <S.Title>일일 피드백</S.Title>
 
           {/* 통계 섹션 */}
           <S.StatsSection>
@@ -125,19 +144,19 @@ const FeedbackList = () => {
 
           {/* 피드백 카드 리스트 */}
           <S.FeedbackList>
-            {AVAILABLE_FEEDBACK_WEEKS.length > 0 ? (
-              AVAILABLE_FEEDBACK_WEEKS.map(({ week, summary }) => (
+            {feedbacks.length > 0 ? (
+              feedbacks.map((feedback) => (
                 <S.FeedbackCard
-                  key={week}
-                  onClick={() => handleFeedbackClick(week)}
+                  key={feedback.id}
+                  onClick={() => handleFeedbackClick(feedback.week, feedback.day)}
                 >
                   <S.CardLeft>
                     <S.CardIcon>
                       <S.CardIconSymbol>description</S.CardIconSymbol>
                     </S.CardIcon>
                     <S.CardContent>
-                      <S.WeekBadge>{week}주차</S.WeekBadge>
-                      <S.Summary>{summary}</S.Summary>
+                      <S.WeekBadge>Week {feedback.week} Day {feedback.day}</S.WeekBadge>
+                      <S.Summary>{feedback.summary}</S.Summary>
                     </S.CardContent>
                   </S.CardLeft>
                   <S.CardRight>
@@ -150,7 +169,7 @@ const FeedbackList = () => {
                 <S.EmptyIcon>sentiment_dissatisfied</S.EmptyIcon>
                 <S.EmptyText>
                   아직 피드백이 없습니다.<br />
-                  7일차를 완료하면 피드백을 받을 수 있습니다.
+                  하루 학습을 완료하면 피드백을 받을 수 있습니다.
                 </S.EmptyText>
               </S.EmptyState>
             )}
