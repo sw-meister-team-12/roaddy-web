@@ -110,7 +110,7 @@ const LevelTest = () => {
       console.log("설문 제출 성공:", data);
 
       alert("설문이 성공적으로 제출되었습니다!");
-      // TODO: 성공 후 다음 페이지로 이동
+      navigate("/level-test/detail");
     } catch (error) {
       console.error("설문 제출 오류:", error);
       alert("설문 제출 중 오류가 발생했습니다.");
