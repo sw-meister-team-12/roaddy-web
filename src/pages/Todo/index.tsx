@@ -100,23 +100,18 @@ const Todo = () => {
     });
   };
 
-  const handleQuizClick = async () => {
+  const handleQuizClick = () => {
     if (!dayData) return;
 
-    // 모든 todo에 대해 퀴즈 조회
-    for (const todo of dayData.todos) {
-      try {
-        const response = await fetch(`${BASE_URL}/api/todos/${todo.todoId}/quiz`);
-        if (response.ok) {
-          const quizData = await response.json();
-          console.log(`[${todo.title}] 퀴즈 데이터:`, quizData);
-        } else {
-          console.error(`[${todo.title}] 퀴즈 조회 실패:`, response.status);
-        }
-      } catch (err) {
-        console.error(`[${todo.title}] 퀴즈 조회 오류:`, err);
-      }
-    }
+    // TODO ID 목록을 state로 전달하며 퀴즈 페이지로 이동
+    const todoIds = dayData.todos.map(todo => todo.todoId);
+    navigate('/todo/quiz', { 
+      state: { 
+        todoIds,
+        week: currentWeek,
+        day: currentDay
+      } 
+    });
   };
 
   // 모든 todo가 완료되었는지 확인
