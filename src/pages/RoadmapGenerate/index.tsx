@@ -77,6 +77,12 @@ const RoadmapGenerate = () => {
         </S.Content>
 
         <S.InputSection>
+          {isLoading && (
+            <S.LoadingOverlay>
+              <S.LoadingSpinner />
+              <S.LoadingText>목표를 분석하고 있습니다...</S.LoadingText>
+            </S.LoadingOverlay>
+          )}
           <S.InputContainer>
             <S.Input
               type="text"

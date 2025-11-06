@@ -139,3 +139,25 @@ export const NotFound = styled.div`
   font-family: 'Pretendard', sans-serif;
   font-size: 18px;
 `;
+
+export const SummaryText = styled.div`
+  background: #f8f9fa;
+  border-left: 4px solid #fe1b85;
+  padding: 20px 24px;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+`;
+
+export const PreviewText = styled.div`
+  background: rgba(254, 27, 133, 0.05);
+  border: 1px solid rgba(254, 27, 133, 0.2);
+  padding: 20px 24px;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+`;

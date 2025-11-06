@@ -113,6 +113,7 @@ export const TodoItem = styled.div<{ completed: boolean }>`
   border: 1px solid ${({ completed }) => 
     completed ? '#e1e1e1' : '#e1e1e1'};
   transition: all 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     background: ${({ completed }) => 

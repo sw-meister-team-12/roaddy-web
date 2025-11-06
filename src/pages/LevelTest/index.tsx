@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Header } from "../../components/common";
+import { useSurveyStore } from "../../store/surveyStore";
 import * as S from "./style";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -25,6 +26,7 @@ const LevelTest = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const surveyData = location.state as SurveyData | null;
+  const setSurveyId = useSurveyStore((state) => state.setSurveyId);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -33,9 +35,12 @@ const LevelTest = () => {
   useEffect(() => {
     if (!surveyData || !surveyData.surveyId || !surveyData.questions) {
       alert("설문 데이터가 없습니다. 로드맵 생성 페이지로 이동합니다.");
-      navigate("/roadmap/generate");
+      navigate("/");
+    } else {
+      // surveyId를 전역 상태에 저장
+      setSurveyId(surveyData.surveyId);
     }
-  }, [surveyData, navigate]);
+  }, [surveyData, navigate, setSurveyId]);
 
   if (!surveyData) {
     return null;
@@ -109,8 +114,8 @@ const LevelTest = () => {
       const data = await response.json();
       console.log("설문 제출 성공:", data);
 
-      alert("설문이 성공적으로 제출되었습니다!");
-      navigate("/level-test/detail");
+      // 기간 선택 페이지로 이동
+      navigate("/duration-select");
     } catch (error) {
       console.error("설문 제출 오류:", error);
       alert("설문 제출 중 오류가 발생했습니다.");
