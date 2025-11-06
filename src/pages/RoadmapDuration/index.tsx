@@ -77,10 +77,16 @@ const RoadmapDuration = () => {
       const data = await response.json();
       console.log('로드맵 생성 성공:', data);
 
-      // roadmapId를 로컬 스토리지에 저장
+      // roadmap 전체 데이터를 로컬 스토리지에 저장
       if (data.roadmapId) {
         localStorage.setItem('roadmap_id', data.roadmapId);
         console.log('로컬 스토리지에 roadmap_id 저장:', data.roadmapId);
+      }
+      
+      // roadmap 전체 데이터를 JSON 형태로 저장
+      if (data) {
+        localStorage.setItem('roadmap_data', JSON.stringify(data));
+        console.log('로컬 스토리지에 roadmap_data 저장:', data);
       }
 
       // 로드맵 목록 페이지로 이동
