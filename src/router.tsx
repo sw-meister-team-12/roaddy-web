@@ -9,6 +9,7 @@ import {
   LevelTest,
   LevelTestDetail,
   RoadmapSimple,
+  DurationSelect,
 } from './pages';
 
 const Router = () => {
@@ -20,6 +21,7 @@ const Router = () => {
         <Route path="/roadmap/:id" element={<RoadmapSimple />} />
         <Route path="/level-test" element={<LevelTest />} />
         <Route path="/level-test/detail" element={<LevelTestDetail />} />
+        <Route path="/duration-select" element={<DurationSelect />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/todo/quiz/:id" element={<Quiz />} />
         <Route path="/feedback" element={<FeedbackList />} />
