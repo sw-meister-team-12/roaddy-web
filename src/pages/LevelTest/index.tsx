@@ -31,9 +31,13 @@ const LevelTest = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    // state에 surveyData가 없으면 로컬 스토리지 확인
     if (!surveyData || !surveyData.surveyId || !surveyData.questions) {
-      alert("설문 데이터가 없습니다. 로드맵 생성 페이지로 이동합니다.");
-      navigate("/roadmap/generate");
+      const storedSurveyId = localStorage.getItem('survey_id');
+      if (!storedSurveyId) {
+        alert("설문 데이터가 없습니다. 로드맵 생성 페이지로 이동합니다.");
+        navigate("/");
+      }
     }
   }, [surveyData, navigate]);
 
@@ -80,7 +84,15 @@ const LevelTest = () => {
 
     setIsSubmitting(true);
     try {
-      const url = `${BASE_URL}/api/surveys/${surveyData.surveyId}`;
+      // surveyId는 로컬 스토리지에서 가져오거나 state에서 가져옴
+      const surveyId = surveyData.surveyId || localStorage.getItem('survey_id');
+      if (!surveyId) {
+        alert("설문 ID가 없습니다.");
+        navigate("/");
+        return;
+      }
+
+      const url = `${BASE_URL}/api/surveys/${surveyId}`;
 
       const answersArray: Answer[] = surveyData.questions.map((question) => ({
         questionId: question.id,
@@ -109,7 +121,7 @@ const LevelTest = () => {
       const data = await response.json();
       console.log("설문 제출 성공:", data);
 
-      alert("설문이 성공적으로 제출되었습니다!");
+      // 레벨 테스트 상세 페이지로 이동
       navigate("/level-test/detail");
     } catch (error) {
       console.error("설문 제출 오류:", error);

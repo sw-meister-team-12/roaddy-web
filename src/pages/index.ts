@@ -7,3 +7,4 @@ export { default as FeedbackList } from './FeedbackList';
 export { default as FeedbackDetail } from './FeedbackDetail';
 export { default as LevelTest } from './LevelTest';
 export { default as LevelTestDetail } from './LevelTestDetail';
+export { default as RoadmapDuration } from './RoadmapDuration';

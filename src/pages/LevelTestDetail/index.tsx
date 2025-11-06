@@ -62,7 +62,7 @@ const LevelTestDetail = () => {
   };
 
   const handleSkip = () => {
-    navigate("/roadmap");
+    navigate("/roadmap-duration");
   };
 
   const handleOptionSelect = (optionIndex: number) => {
@@ -192,8 +192,8 @@ const LevelTestDetail = () => {
                 {level === "입문" &&
                   "처음 시작하시는군요! 입문 과정부터 천천히 학습하세요."}
               </S.ResultDescription>
-              <S.ResultButton onClick={() => navigate("/roadmap")}>
-                로드맵 보러가기
+              <S.ResultButton onClick={() => navigate("/roadmap-duration")}>
+                학습 기간 설정하기
               </S.ResultButton>
             </S.ResultContainer>
           </S.Content>

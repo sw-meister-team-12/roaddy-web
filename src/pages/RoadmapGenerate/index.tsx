@@ -42,6 +42,12 @@ const RoadmapGenerate = () => {
       const data = await response.json();
       console.log('로드맵 생성 성공:', data);
       
+      // surveyId를 로컬 스토리지에 저장
+      if (data.surveyId) {
+        localStorage.setItem('survey_id', data.surveyId);
+        console.log('로컬 스토리지에 survey_id 저장:', data.surveyId);
+      }
+      
       // LevelTest 페이지로 이동하면서 설문 데이터 전달
       if (data.surveyId && data.questions) {
         navigate('/level-test', {
