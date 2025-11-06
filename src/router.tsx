@@ -21,7 +21,7 @@ const Router = () => {
         <Route path="/todo" element={<Todo />} />
         <Route path="/todo/quiz/:id" element={<Quiz />} />
         <Route path="/feedback" element={<FeedbackList />} />
-        <Route path="/feedback/:id" element={<FeedbackDetail />} />
+        <Route path="/feedback/:week" element={<FeedbackDetail />} />
       </Routes>
     </BrowserRouter>
   );
