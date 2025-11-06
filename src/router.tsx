@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import {
   RoadmapList,
   Quiz,
@@ -11,11 +11,28 @@ import {
   LevelTestDetail,
 } from './pages';
 
+interface ProtectedRouteProps {
+  element: React.ReactElement;
+}
+
+const ProtectedRoute = ({ element }: ProtectedRouteProps) => {
+  const roadmapId = localStorage.getItem('roadmap_id');
+  
+  if (!roadmapId) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return element;
+};
+
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/roadmap" element={<RoadmapList />} />
+        <Route 
+          path="/roadmap" 
+          element={<ProtectedRoute element={<RoadmapList />} />} 
+        />
         <Route path="/" element={<RoadmapGenerate />} />
         <Route path="/roadmap/:id" element={<RoadmapDetail />} />
         <Route path="/level-test" element={<LevelTest />} />
