@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/common';
+import { useRoadmapStore } from '../../store/roadmapStore';
 import * as S from './style';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -30,28 +32,39 @@ interface DayData {
 }
 
 const Todo = () => {
+  const navigate = useNavigate();
+  const { roadmapId, currentWeek, currentDay } = useRoadmapStore();
+  const hasAlerted = useRef(false);
+  
   const [weekData, setWeekData] = useState<WeekData | null>(null);
   const [dayData, setDayData] = useState<DayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 임시 값
-  const roadmapId = 2;
-  const weekNumber = 1;
-  const dayNumber = 1; // 오늘 해야 할 ToDo라고 가정
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    // 로드맵이 없으면 알럿 띄우고 생성 페이지로 이동 (한 번만)
+    if (!roadmapId && !hasAlerted.current) {
+      hasAlerted.current = true;
+      alert('로드맵을 생성하세요');
+      navigate('/');
+      return;
+    }
+
+    if (roadmapId) {
+      fetchData();
+    }
+  }, [roadmapId, currentWeek, currentDay]);
 
   const fetchData = async () => {
+    if (!roadmapId) return;
+
     try {
       setLoading(true);
       setError(null);
 
       // 주차 정보 조회
       const weekResponse = await fetch(
-        `${BASE_URL}/api/roadmaps/${roadmapId}/weeks/${weekNumber}`
+        `${BASE_URL}/api/roadmaps/${roadmapId}/weeks/${currentWeek}`
       );
       if (!weekResponse.ok) {
         throw new Error('주차 정보를 불러오는데 실패했습니다.');
@@ -59,9 +72,9 @@ const Todo = () => {
       const weekResult = await weekResponse.json();
       setWeekData(weekResult);
 
-      // 특정 일차의 TODO 목록 조회
+      // 현재 주차/일차의 TODO 목록 조회
       const dayResponse = await fetch(
-        `${BASE_URL}/api/roadmaps/${roadmapId}/weeks/${weekNumber}/days/${dayNumber}`
+        `${BASE_URL}/api/roadmaps/${roadmapId}/weeks/${currentWeek}/days/${currentDay}`
       );
       if (!dayResponse.ok) {
         throw new Error('TODO 목록을 불러오는데 실패했습니다.');
@@ -155,11 +168,16 @@ const Todo = () => {
 
               <S.TodoList>
                 {dayData.todos.map((todo) => (
-                  <S.TodoItem key={todo.todoId} completed={todo.isCompleted}>
+                  <S.TodoItem 
+                    key={todo.todoId} 
+                    completed={todo.isCompleted}
+                    onClick={() => handleTodoToggle(todo.todoId)}
+                  >
                     <S.TodoCheckbox
                       type="checkbox"
                       checked={todo.isCompleted}
                       onChange={() => handleTodoToggle(todo.todoId)}
+                      onClick={(e) => e.stopPropagation()}
                     />
                     <S.TodoContent>
                       <S.TodoItemTitle completed={todo.isCompleted}>
