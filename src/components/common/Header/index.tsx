@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import * as S from './style';
+import logoSvg from '../../../assets/logo.svg';
 
 const Header = () => {
   return (
     <S.HeaderContainer>
       <S.HeaderContent>
-        <S.Logo>🐰Roaddy</S.Logo>
+        <S.Logo>
+          <img src={logoSvg} alt="Roaddy Logo" />
+        </S.Logo>
         
         <S.RightContent>
           <S.Navigation>

@@ -47,7 +47,7 @@ export const PeriodButton = styled.button<{ selected?: boolean }>`
   transition: all 0.2s;
   
   font-family: 'Pretendard', sans-serif;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 24px;
   color: white;
   white-space: nowrap;
@@ -63,7 +63,7 @@ export const PeriodButton = styled.button<{ selected?: boolean }>`
 
 export const InputSection = styled.div`
   position: fixed;
-  bottom: 160px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   width: 960px;

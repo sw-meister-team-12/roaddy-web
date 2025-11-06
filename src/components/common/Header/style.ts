@@ -25,14 +25,16 @@ export const HeaderContent = styled.div`
 `;
 
 export const Logo = styled.div`
-  width: 201.602px;
-  height: 67.603px;
+  width: 100.8px;
+  height: 38.8px;
   display: flex;
   align-items: center;
-  font-family: 'Pretendard', sans-serif;
-  font-weight: 700;
-  font-size: 28px;
-  color: #fe1b85;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
 export const Navigation = styled.nav`
