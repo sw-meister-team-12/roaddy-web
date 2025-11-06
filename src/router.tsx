@@ -17,7 +17,6 @@ const Router = () => {
       <Routes>
         <Route path="/roadmap" element={<RoadmapList />} />
         <Route path="/" element={<RoadmapGenerate />} />
-        <Route path="/roadmap/generate" element={<RoadmapGenerate />} />
         <Route path="/roadmap/:id" element={<RoadmapDetail />} />
         <Route path="/level-test" element={<LevelTest />} />
         <Route path="/level-test/detail" element={<LevelTestDetail />} />

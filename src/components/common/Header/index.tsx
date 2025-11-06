@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <S.HeaderContainer>
       <S.HeaderContent>
-        <S.Logo>
+        <S.Logo as={Link} to="/">
           <img src={logoSvg} alt="Roaddy Logo" />
         </S.Logo>
         
