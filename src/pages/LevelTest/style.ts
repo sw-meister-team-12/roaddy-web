@@ -1,0 +1,189 @@
+import styled from 'styled-components';
+
+export const Container = styled.div`
+  background: white;
+  min-height: 100vh;
+  width: 100%;
+  padding-top: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1160px;
+  margin-top: 49px;
+  padding-bottom: 100px;
+`;
+
+export const PageTitle = styled.h1`
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+  color: #000;
+  margin: 0 0 49px 0;
+`;
+
+export const ProgressSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 13px;
+`;
+
+export const ProgressTitle = styled.div`
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  color: #000;
+`;
+
+export const ProgressCount = styled.div`
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  color: #000;
+`;
+
+export const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background: #efefef;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 57px;
+`;
+
+export const ProgressFill = styled.div<{ progress: number }>`
+  width: ${({ progress }) => progress}%;
+  height: 100%;
+  background: #fe1b85;
+  transition: width 0.3s ease;
+`;
+
+export const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 60px;
+`;
+
+export const QuestionText = styled.h2`
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  color: #000;
+  margin: 0;
+`;
+
+export const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+export const OptionButton = styled.button<{ selected?: boolean }>`
+  width: 100%;
+  height: 80px;
+  background: ${({ selected }) => (selected ? '#f6fbfc' : '#fff')};
+  border: 1px solid ${({ selected }) => (selected ? '#cacfce' : '#e1e1e1')};
+  border-radius: 8px;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  &:hover {
+    background: #f6fbfc;
+    border-color: #cacfce;
+  }
+`;
+
+export const OptionNumber = styled.div`
+  width: 35px;
+  height: 35px;
+  background: #e0e7e9;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  color: #686868;
+`;
+
+export const OptionText = styled.div`
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 29px;
+  color: #000;
+`;
+
+export const ButtonSection = styled.div`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+export const BackButton = styled.button`
+  padding: 10px 30px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 21px;
+  color: white;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const NextButton = styled.button`
+  padding: 10px 30px;
+  background: #fe1b85;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 21px;
+  color: white;
+  
+  &:hover {
+    background: #dd295e;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+

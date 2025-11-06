@@ -7,6 +7,7 @@ import {
   RoadmapDetail,
   FeedbackList,
   FeedbackDetail,
+  LevelTest,
 } from './pages';
 
 const Router = () => {
@@ -16,6 +17,7 @@ const Router = () => {
         <Route path="/roadmap" element={<RoadmapList />} />
         <Route path="/roadmap/generate" element={<RoadmapGenerate />} />
         <Route path="/roadmap/:id" element={<RoadmapDetail />} />
+        <Route path="/level-test" element={<LevelTest />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/todo/quiz/:id" element={<Quiz />} />
         <Route path="/feedback" element={<FeedbackList />} />
