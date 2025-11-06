@@ -193,6 +193,7 @@ const Container = styled.div`
   flex-direction: column;
   position: relative;
   padding-top: 80px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
 
   &::before {
     content: '';
@@ -647,94 +648,94 @@ const RoadmapSimple = () => {
         <MainHeader>
           <Title>백엔드 개발 로드맵</Title>
 
-        {/* 진행 통계 */}
-        <ProgressStats>
-          <StatItem>
-            <StatNumber>3</StatNumber>
-            <StatLabel>현재 주차</StatLabel>
-          </StatItem>
-          <StatItem>
-            <StatNumber>84</StatNumber>
-            <StatLabel>총 일수</StatLabel>
-          </StatItem>
-          <StatItem>
-            <StatNumber>25%</StatNumber>
-            <StatLabel>진행률</StatLabel>
-          </StatItem>
-        </ProgressStats>
+          {/* 진행 통계 */}
+          <ProgressStats>
+            <StatItem>
+              <StatNumber>3</StatNumber>
+              <StatLabel>현재 주차</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatNumber>84</StatNumber>
+              <StatLabel>총 일수</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatNumber>25%</StatNumber>
+              <StatLabel>진행률</StatLabel>
+            </StatItem>
+          </ProgressStats>
 
-        {/* 학습 단계 로드맵 */}
-        <StepBarContainer>
-          <StepBar currentWeek={currentWeek}>
-            {[
-              { id: 1, title: '환경설정', desc: 'Week 1-2', icon: 'build' },
-              { id: 2, title: '언어기초', desc: 'Week 3-4', icon: 'computer' },
-              { id: 3, title: '데이터베이스', desc: 'Week 5-6', icon: 'storage' },
-              { id: 4, title: '서버구축', desc: 'Week 7-8', icon: 'public' },
-              { id: 5, title: 'API & 배포', desc: 'Week 9-12', icon: 'rocket_launch' }
-            ].map((step) => (
-              <StepItem key={step.id} isActive={step.id === Math.ceil(currentWeek / 2.4)}>
-                <StepCircle
-                  isActive={step.id === Math.ceil(currentWeek / 2.4)}
-                  isCompleted={step.id < Math.ceil(currentWeek / 2.4)}
-                >
-                  {step.id < Math.ceil(currentWeek / 2.4) ? '✓' : (
-                    step.icon === 'build' ? <BuildIcon style={{ width: '16px', height: '16px' }} /> :
-                    step.icon === 'computer' ? <ComputerIcon style={{ width: '16px', height: '16px' }} /> :
-                    step.icon === 'storage' ? <StorageIcon style={{ width: '16px', height: '16px' }} /> :
-                    step.icon === 'public' ? <PublicIcon style={{ width: '16px', height: '16px' }} /> :
-                    step.icon === 'rocket_launch' ? <RocketLaunchIcon style={{ width: '16px', height: '16px' }} /> :
-                    null
-                  )}
-                </StepCircle>
-                <StepLabel isActive={step.id === Math.ceil(currentWeek / 2.4)}>
-                  {step.title}
-                </StepLabel>
-                <div style={{
-                  fontSize: '10px',
-                  color: '#94A3B8',
-                  fontWeight: 500,
-                  marginTop: '2px'
-                }}>
-                  {step.desc}
-                </div>
-              </StepItem>
+          {/* 학습 단계 로드맵 */}
+          <StepBarContainer>
+            <StepBar currentWeek={currentWeek}>
+              {[
+                { id: 1, title: '환경설정', desc: 'Week 1-2', icon: 'build' },
+                { id: 2, title: '언어기초', desc: 'Week 3-4', icon: 'computer' },
+                { id: 3, title: '데이터베이스', desc: 'Week 5-6', icon: 'storage' },
+                { id: 4, title: '서버구축', desc: 'Week 7-8', icon: 'public' },
+                { id: 5, title: 'API & 배포', desc: 'Week 9-12', icon: 'rocket_launch' }
+              ].map((step) => (
+                <StepItem key={step.id} isActive={step.id === Math.ceil(currentWeek / 2.4)}>
+                  <StepCircle
+                    isActive={step.id === Math.ceil(currentWeek / 2.4)}
+                    isCompleted={step.id < Math.ceil(currentWeek / 2.4)}
+                  >
+                    {step.id < Math.ceil(currentWeek / 2.4) ? '✓' : (
+                      step.icon === 'build' ? <BuildIcon style={{ width: '16px', height: '16px' }} /> :
+                        step.icon === 'computer' ? <ComputerIcon style={{ width: '16px', height: '16px' }} /> :
+                          step.icon === 'storage' ? <StorageIcon style={{ width: '16px', height: '16px' }} /> :
+                            step.icon === 'public' ? <PublicIcon style={{ width: '16px', height: '16px' }} /> :
+                              step.icon === 'rocket_launch' ? <RocketLaunchIcon style={{ width: '16px', height: '16px' }} /> :
+                                null
+                    )}
+                  </StepCircle>
+                  <StepLabel isActive={step.id === Math.ceil(currentWeek / 2.4)}>
+                    {step.title}
+                  </StepLabel>
+                  <div style={{
+                    fontSize: '10px',
+                    color: '#94A3B8',
+                    fontWeight: 500,
+                    marginTop: '2px'
+                  }}>
+                    {step.desc}
+                  </div>
+                </StepItem>
+              ))}
+            </StepBar>
+          </StepBarContainer>
+        </MainHeader>
+
+        <ScrollContainer>
+          <RoadmapGrid>
+            {mockRoadmapData.weeks.map((week) => (
+              <WeekColumn key={week.week}>
+                <WeekCard>
+                  <WeekHeader>
+                    <WeekNumber>Week {week.week}</WeekNumber>
+                    <WeekBadge>백엔드</WeekBadge>
+                  </WeekHeader>
+                  <WeekTitle>{week.title}</WeekTitle>
+                  <WeekDescription>{week.description}</WeekDescription>
+                </WeekCard>
+
+                <DaysContainer>
+                  <DaysHeader>
+                    <DaysIcon><CalendarTodayIcon style={{ width: '12px', height: '12px' }} /></DaysIcon>
+                    <DaysTitle>7일 학습 계획</DaysTitle>
+                  </DaysHeader>
+                  <DaysList>
+                    {week.days.map((day) => (
+                      <DayItem key={day.day}>
+                        <DayNumber>D{day.day}</DayNumber>
+                        <DayTitle>{day.title}</DayTitle>
+                      </DayItem>
+                    ))}
+                  </DaysList>
+                </DaysContainer>
+              </WeekColumn>
             ))}
-          </StepBar>
-        </StepBarContainer>
-      </MainHeader>
-
-      <ScrollContainer>
-        <RoadmapGrid>
-          {mockRoadmapData.weeks.map((week) => (
-            <WeekColumn key={week.week}>
-              <WeekCard>
-                <WeekHeader>
-                  <WeekNumber>Week {week.week}</WeekNumber>
-                  <WeekBadge>백엔드</WeekBadge>
-                </WeekHeader>
-                <WeekTitle>{week.title}</WeekTitle>
-                <WeekDescription>{week.description}</WeekDescription>
-              </WeekCard>
-
-              <DaysContainer>
-                <DaysHeader>
-                  <DaysIcon><CalendarTodayIcon style={{ width: '12px', height: '12px' }} /></DaysIcon>
-                  <DaysTitle>7일 학습 계획</DaysTitle>
-                </DaysHeader>
-                <DaysList>
-                  {week.days.map((day) => (
-                    <DayItem key={day.day}>
-                      <DayNumber>D{day.day}</DayNumber>
-                      <DayTitle>{day.title}</DayTitle>
-                    </DayItem>
-                  ))}
-                </DaysList>
-              </DaysContainer>
-            </WeekColumn>
-          ))}
-        </RoadmapGrid>
-      </ScrollContainer>
+          </RoadmapGrid>
+        </ScrollContainer>
       </Container>
     </>
   );
