@@ -52,31 +52,47 @@ const Quiz = () => {
   const loadFirstQuiz = async () => {
     if (!todoIds || todoIds.length === 0) return;
 
-    try {
-      setLoading(true);
-      const firstTodoId = todoIds[0];
-      const response = await fetch(`${BASE_URL}/api/todos/${firstTodoId}/quiz`);
-      
-      if (!response.ok) {
-        throw new Error('퀴즈를 불러오는데 실패했습니다.');
-      }
+    const firstTodoId = todoIds[0];
+    let retryCount = 0;
+    const maxRetries = 60; // 최대 60번 시도 (약 1분)
+    const retryDelay = 1000; // 1초마다 재시도
 
-      const quizData = await response.json();
-      
-      // 초기 큐 설정: 첫 번째는 로드된 퀴즈, 나머지는 null
-      const initialQueue: QuizItem[] = [
-        { todoId: firstTodoId, quizData },
-        ...todoIds.slice(1).map((id: string) => ({ todoId: id, quizData: null }))
-      ];
-      
-      setQuizQueue(initialQueue);
-    } catch (err) {
-      console.error('퀴즈 로드 오류:', err);
-      alert('퀴즈를 불러오는데 실패했습니다.');
-      navigate('/todo');
-    } finally {
-      setLoading(false);
-    }
+    const attemptLoad = async (): Promise<void> => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${BASE_URL}/api/todos/${firstTodoId}/quiz`);
+        
+        if (response.status === 500 && retryCount < maxRetries) {
+          // 500 에러면 퀴즈 생성 중이므로 재시도
+          retryCount++;
+          console.log(`퀴즈 생성 대기 중... (${retryCount}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          return attemptLoad();
+        }
+        
+        if (!response.ok) {
+          throw new Error(`퀴즈를 불러오는데 실패했습니다. (${response.status})`);
+        }
+
+        const quizData = await response.json();
+        
+        // 초기 큐 설정: 첫 번째는 로드된 퀴즈, 나머지는 null
+        const initialQueue: QuizItem[] = [
+          { todoId: firstTodoId, quizData },
+          ...todoIds.slice(1).map((id: string) => ({ todoId: id, quizData: null }))
+        ];
+        
+        setQuizQueue(initialQueue);
+        setLoading(false);
+      } catch (err) {
+        console.error('퀴즈 로드 오류:', err);
+        setLoading(false);
+        alert('퀴즈를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+        navigate('/todo');
+      }
+    };
+
+    await attemptLoad();
   };
 
   const loadNextTodoQuiz = async (todoId: string) => {
